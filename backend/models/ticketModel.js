@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const ticketSchema = mongoose.Schema(
   {
-    name: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'User',
@@ -20,63 +20,81 @@ const ticketSchema = mongoose.Schema(
       required: [true, 'Please add summary'],
     },
     applicationType: {
-      type: Boolean,
-      required: [true, 'Please add summary'],
-      enum: ['Бюджет', 'Позабюджетні кошти', 'Three'],
+      type: String,
+      required: [true, 'Please add application type'],
+      enum: ['budget', 'non-budget'],
     },
     company: {
-      type: Boolean,
-      required: [true, 'Please add summary'],
+      type: String,
+      required: [true, 'Please add company'],
+      enum: ['IG', 'SKY', 'WB'],
+    },
+    username: {
+      type: String,
+      required: [true, 'Please add company'],
       default: false,
     },
     unit: {
-      type: Boolean,
-      required: [true, 'Please add summary'],
-      default: false,
+      type: String,
+      required: [true, 'Please add unit'],
+      enum: ['company', 'direction', 'admin', 'financial', 'security', 'control', 'lawyer', 'foreign-economic', 'marketing', 'business-dev-app', 'it', 'hr', 'client', 'storage', 'tech-support', 'lubricants-lab', 'industrial-equipment', 'b2b', 'transport', 'industrial', 'agriculture', 'industry', 'b2c', 'pcmo-acto', 'pcmo-retail', 'internet-sales'],
     },
     place: {
-      type: Map,
-      of: String,
+      type: String,
+      required: [true, 'Please add place'],
+      enum: ['kyiv-sverstyka', 'brovary-zaliznychna', 'brovary-moskalenka', 'dnipro-archive', 'dnipro-laboratory', 'dnipro-oil-cleaning', 'dnipro-office', 'dnipro-storage', 'dnipro-lamana', 'dnipro-sichvyh', 'dnipro-grushevskogo', 'kyiv-chervonotkatska', 'lviv-gorodockogo', 'lviv-persenkyva', 'odessa-storage-ysativska', 'khmelnytskyi-storage', 'exclusion'],
+    },
+    applicationId: {
+      type: String,
+      required: [true, 'Please add applicationId'],
+    },
+    date: {
+      type: String,
+      required: [true, 'Please add date'],
+    },
+    time: {
+      type: String,
+      required: [true, 'Please add time'],
     },
     type: {
-      type: Boolean,
-      required: [true, 'Please add summary'],
-      default: false,
+      type: String,
+      required: [true, 'Please add type'],
+      enum: ['home-tech', 'lab-equipment', 'storage-equipment', 'labor-protection-equipment', 'it-equipment', 'furniture', 'cars', 'tools', 'sequrity-equipment', 'software', 'another-equipment', 'repairment'],
     },
     applicationName: {
-      type: Boolean,
-      required: [true, 'Please add summary'],
+      type: String,
+      required: [true, 'Please add application type'],
       default: false,
     },
     spareParts: {
       type: Boolean,
-      required: [true, 'Please add summary'],
+      required: [true, 'Please add spare parts'],
       default: false,
     },
     month: {
-      type: Boolean,
-      required: [true, 'Please add summary'],
+      type: String,
+      required: [true, 'Please add month'],
       default: false,
     },
     needless: {
-      type: Boolean,
-      required: [true, 'Please add summary'],
+      type: String,
+      required: [true, 'Please add needless'],
       default: false,
     },
     provider: {
-      type: Boolean,
-      required: [true, 'Please add summary'],
+      type: String,
+      required: [true, 'Please add provider'],
       default: false,
     },
     comment: {
-      type: Boolean,
-      required: [true, 'Please add summary'],
+      type: String,
+      required: [true, 'Please add comment'],
       default: false,
     },
     status: {
-      type: Boolean,
-      required: [true, 'Please add summary'],
-      enum: ['onDraft', 'onSubmit', 'submitted', 'onDelete'],
+      type: String,
+      required: [true, 'Please add status'],
+      enum: ['onDraft', 'onSubmit', 'submitted', 'decline', 'return'],
       default: false,
     },
   },

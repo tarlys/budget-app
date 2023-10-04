@@ -1,21 +1,16 @@
 import { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-// import { reset } from '../features/auth/authSlice'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import { createTicket, deleteTicket, reset } from '../features/tickets/ticketSlice'
-import Spinner from '../components/Spinner'
+import { useDispatch } from 'react-redux'
+import { reset } from '../features/auth/authSlice'
+import { useSelector } from 'react-redux'
 
 function Form() {
   const getTime = () => new Date().getHours() + ':' + new Date().getMinutes()
   const { user } = useSelector((state: any) => state.auth)
-  const { isLoading, isError, isSuccess, message } = useSelector((state: any) => state.ticket)
-
   let [price, setPrice] = useState(0)
   let [count, setCount] = useState(1)
   let [summary, setSummary] = useState(0)
   let [date, setDate] = useState('')
-  let [username, setUserName] = useState(user.name)
+  // let [username, setUsername] = useState('')
   let [applicationType, setApplicationType] = useState('')
   let [company, setCompany] = useState('')
   let [unit, setUnit] = useState('')
@@ -27,9 +22,8 @@ function Form() {
   let [needless, setNeedless] = useState('')
   let [provider, setProvider] = useState('')
   let [comment, setComment] = useState('')
-  let [status, setStatus] = useState('onSubmit')
+  let [status, setStatus] = useState('')
   let [time, setTime] = useState(getTime())
-  let [onDraftStatus, setOnDraftStatus] = useState(false)
 
   const getDate = () => {
     let now = new Date()
@@ -40,14 +34,35 @@ function Form() {
     return now.getFullYear() + '-' + month + '-' + day
   }
 
+  // const [formData, setFormData] = useState({
+  //   price: 0,
+  //   count: 0,
+  //   summary: 0,
+  //   id: '',
+  //   date: getDate(),
+  //   username: '',
+  //   applicationType: '',
+  //   company: '',
+  //   unit: '',
+  //   place: '',
+  //   type: '',
+  //   applicationName: '',
+  //   spareParts: false,
+  //   month: '2024-01',
+  //   needless: '',
+  //   provider: '',
+  //   comment: '',
+  //   status: '',
+  //   time: getTime(),
+  // })
   const form = {
     price,
     count,
     summary,
     date,
+    // username,
     applicationType,
     company,
-    username,
     unit,
     place,
     type,
@@ -61,11 +76,18 @@ function Form() {
     time,
   }
 
+  // let { price, count, id, date, username, applicationType, company, unit, place, type, applicationName, spareParts, month, needless, provider, comment, time, status } = formData
+
   const dispatch = useDispatch()
-  const navigate = useNavigate()
+
+  // const onChange = (event: any) => {
+  //   setFormData((prevState) => ({ ...prevState, [event.target.name]: event.target.value }))
+  //   console.log(formData)
+  // }
 
   const priceHandler = (e: any) => setPrice(e.target.value)
   const countHandler = (e: any) => setCount(e.target.value)
+  // const usernameHandler = (e: any) => setUsername(e.target.value)
   const applicationTypeHandler = (e: any) => setApplicationType(e.target.value)
   const companyHandler = (e: any) => setCompany(e.target.value)
   const unitHandler = (e: any) => setUnit(e.target.value)
@@ -77,96 +99,32 @@ function Form() {
   const needlessHandler = (e: any) => setNeedless(e.target.value)
   const providerHandler = (e: any) => setProvider(e.target.value)
   const commentHandler = (e: any) => setComment(e.target.value)
-  const draftStatusHandler = (e: any) => setOnDraftStatus(e.target.checked)
 
   const onSubmitButton = (event: any) => {
     event.preventDefault()
+    setStatus('onSubmit')
+  }
 
-    setStatus(event)
-
-    dispatch(
-      createTicket({
-        price,
-        count,
-        summary,
-        date,
-        applicationType,
-        company,
-        unit,
-        username,
-        place,
-        type,
-        applicationName,
-        spareParts,
-        month,
-        needless,
-        provider,
-        comment,
-        status,
-        time,
-      })
-    )
-
-    navigate('/')
+  const onDeleteButton = (event: any) => {
+    event.preventDefault()
+    setStatus('onDelete')
   }
 
   const onDraftButton = (event: any) => {
     event.preventDefault()
-    setStatus(event.target.name)
-    dispatch(
-      createTicket({
-        price,
-        count,
-        summary,
-        date,
-        applicationType,
-        company,
-        unit,
-        username,
-        place,
-        type,
-        applicationName,
-        spareParts,
-        month,
-        needless,
-        provider,
-        comment,
-        status,
-        time,
-      })
-    )
-    navigate('/')
+    setStatus('onDraft')
   }
-
-  useEffect(() => {
-    if (onDraftStatus) {
-      setStatus('onDraft')
-    }
-  }, [onDraftStatus])
 
   useEffect(() => {
     setSummary(count * price)
   }, [price, count])
 
   useEffect(() => {
-    if (isError) {
-      toast.error(message)
-    }
-    if (isSuccess) {
-      dispatch(reset())
-      navigate('/')
-    }
-
     dispatch(reset())
-  }, [dispatch, isError, isSuccess, navigate, message])
-
+  }, [dispatch])
   useEffect(() => {
     setDate(getDate())
   }, [date])
-
-  if (isLoading) {
-    return <Spinner />
-  }
 
   return (
     <>
@@ -176,14 +134,14 @@ function Form() {
             <label htmlFor='date' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
               Дата заповнення анкети
             </label>
-            <input type='date' id='date' name='date' value={date} className='block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' disabled />
+            <input type='date' id='date' name='date' value={date} className='block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' disabled required />
           </div>
 
           <div className='mb-6'>
             <label htmlFor='username' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
               ПІБ того хто заповнює анкету
             </label>
-            <input type='text' id='username' name='username' value={username} className='block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Ваше імя та прізвище' disabled />
+            <input type='text' id='username' name='username' value={user.name} className='block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Ваше імя та прізвище' disabled required />
           </div>
         </div>
 
@@ -192,7 +150,7 @@ function Form() {
             <label htmlFor='application-type' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
               Тип заявки
             </label>
-            <select id='application-type' name='application-type' value={applicationType} onChange={applicationTypeHandler} className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'>
+            <select id='application-type' name='application-type' value={applicationType} onChange={applicationTypeHandler} className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' required>
               <option value='select'>Виберіть тип заявки</option>
               <option value='budget'>Бюджет</option>
               <option value='non-budget'>Позабюджетні кошти</option>
@@ -203,7 +161,7 @@ function Form() {
             <label htmlFor='companies' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
               Виберіть компанію
             </label>
-            <select id='companies' name='companies' value={company} onChange={companyHandler} className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'>
+            <select id='companies' name='companies' value={company} onChange={companyHandler} className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' required>
               <option value='select'> Виберіть команію до якої відноситься заявка</option>
               <option value='IG'>IG</option>
               <option value='SKY'>SKY</option>
@@ -215,7 +173,7 @@ function Form() {
             <label htmlFor='unit' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
               Виберіть відділ
             </label>
-            <select id='unit' name='unit' onChange={unitHandler} className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'>
+            <select id='unit' name='unit' onChange={unitHandler} className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' required>
               <option value='select'>Виберіть відділ до якого відноситься заявка</option>
               <option value='company'>Компанія</option>
               <option value='direction'>Дирекція</option>
@@ -252,7 +210,7 @@ function Form() {
             <label htmlFor='place' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
               Місце де заявка буде реалізована
             </label>
-            <select id='place' name='place' value={place} onChange={placeHandler} className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'>
+            <select id='place' name='place' value={place} onChange={placeHandler} className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' required>
               <option value='select'>Виберіть адресу</option>
               <option value='kyiv-sverstyka'>м. Київ, вул. Сверстюка Євгена, буд.11-А, кв. (офіс) прим. 1202</option>
               <option value='brovary-zaliznychna'>Склад Бровари Залізнична 4</option>
@@ -278,7 +236,7 @@ function Form() {
             <label htmlFor='type' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
               Вид основного засобу
             </label>
-            <select id='type' name='type' value={type} onChange={typeHandler} className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'>
+            <select id='type' name='type' value={type} onChange={typeHandler} className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' required>
               <option value='select'>Виберіть тип основного засобу</option>
               <option value='home-tech'>Побутова техніка</option>
               <option value='lab-equipment'>Лабораторне обладнання</option>
@@ -300,11 +258,11 @@ function Form() {
           <label htmlFor='application-name' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
             Найменування що потрібно
           </label>
-          <input type='text' name='text' value={applicationName} onChange={applicationNameHandler} id='application-name' className='block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Найменування позиції яка потрібна' />
+          <input type='text' name='text' value={applicationName} onChange={applicationNameHandler} id='application-name' className='block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Найменування позиції яка потрібна' required />
         </div>
 
         <div className='flex items-center mb-4'>
-          <input id='spare-parts' name='spare-parts' type='checkbox' checked={spareParts} onChange={sparePartsHandler} className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600' />
+          <input id='spare-parts' name='spare-parts' type='checkbox' checked={spareParts} onChange={sparePartsHandler} className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600' required />
           <label htmlFor='spare-parts' className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'>
             Купівля запчастини до вже наявного основного засобу
           </label>
@@ -315,21 +273,21 @@ function Form() {
             <label htmlFor='month' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
               Місяць і рік придбання
             </label>
-            <input type='month' name='month' id='month' min='2024-01' value={month} onChange={monthHandler} className='block w-full p-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
+            <input type='month' name='month' id='month' min='2024-01' value={month} onChange={monthHandler} className='block w-full p-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' required />
           </div>
 
           <div className='mb-6'>
             <label htmlFor='count' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
               Кількість
             </label>
-            <input type='number' id='count' name='count' className='block w-full p-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Введіть кількість' value={count} onChange={countHandler} />
+            <input type='number' id='count' name='count' className='block w-full p-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Введіть кількість' value={count} onChange={countHandler} required />
           </div>
 
           <div className='mb-6'>
             <label htmlFor='price' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
               Ціна
             </label>
-            <input type='number' id='price' name='price' value={price} onChange={priceHandler} className='block w-full p-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Введіть ціну в грн за одиницю' />
+            <input type='number' id='price' name='price' value={price} onChange={priceHandler} className='block w-full p-3 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Введіть ціну в грн за одиницю' required />
             <p id='helper-text-explanation' className='mt-2 text-sm text-gray-500 dark:text-gray-400'>
               Ціна за од., грн. без ПДВ
             </p>
@@ -339,7 +297,7 @@ function Form() {
             <label htmlFor='summary' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
               Разом
             </label>
-            <input type='text' id='summary' name='summary' aria-label='disabled input' className='mb-6 bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Сумма(кількість * ціна)' value={summary} disabled />
+            <input type='text' id='summary' name='summary' aria-label='disabled input' className='mb-6 bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Сумма(кількість * ціна)' value={summary} disabled required />
           </div>
         </div>
 
@@ -347,43 +305,36 @@ function Form() {
           <label htmlFor='needless' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
             Обґрунтування необхідності придбання (мета)
           </label>
-          <textarea id='needless' name='needless' value={needless} onChange={needlessHandler} className='block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Коротко обгрунтуйте навіщо вам ця інвестиція та її потреба чи прибутковість' />
+          <textarea id='needless' name='needless' value={needless} onChange={needlessHandler} className='block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Коротко обгрунтуйте навіщо вам ця інвестиція та її потреба чи прибутковість' required />
         </div>
 
         <div className='mb-6'>
           <label htmlFor='provider' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
             Постачальник
           </label>
-          <input type='text' value={provider} onChange={providerHandler} id='provider' name='provider' className='block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Введіть назву компанії постачальника товара чи послуги' />
+          <input type='text' value={provider} onChange={providerHandler} id='provider' name='provider' className='block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Введіть назву компанії постачальника товара чи послуги' required />
         </div>
 
         <div className='mb-6'>
           <label htmlFor='comment' className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
             Коментар (наприклад: посилання на варіанти, альтернативні варіанти постачальників){' '}
           </label>
-          <textarea id='comment' name='comment' value={comment} onChange={commentHandler} className='block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Місце для коментаря' />
+          <textarea id='comment' name='comment' value={comment} onChange={commentHandler} className='block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Місце для коментаря' required />
         </div>
 
-        <div className='flex items-center mb-4'>
-          <input id='draft-status' name='draft-status' type='checkbox' checked={onDraftStatus} onChange={draftStatusHandler} className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600' />
-          <label htmlFor='draft-status' className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'>
-            Зберегти заявку як чернетку(Не відправляти на затвердження)
-          </label>
-        </div>
+        {/* <div className='grid md:grid-cols-3 md:gap-6'> */}
+        <button type='submit' onClick={onDraftButton} className='text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700'>
+          В чернетку
+        </button>
 
-        <div className='grid md:grid-cols-2 md:gap-6'>
-          {/* <button type='submit' onClick={onDraftButton} name='onDraft' className='text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700'>
-            В чернетку
-          </button> */}
+        {/* <button onClick={onSubmitButton} className='focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800'>
+          На затвердження
+        </button> */}
 
-          <button onClick={onSubmitButton} name='onSubmit' className='focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800'>
-            На затвердження
-          </button>
-
-          {/* <button onClick={onDeleteButton} name='onDelete' className='focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900'>
+        {/* <button onClick={onDeleteButton} className='focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900'>
             Видалити
-          </button> */}
-        </div>
+          </button>
+        </div> */}
       </form>
     </>
   )

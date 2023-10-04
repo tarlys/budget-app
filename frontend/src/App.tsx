@@ -7,6 +7,8 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Header from './components/Header'
 import Home from './pages/Home'
+import PrivateRoute from './components/PrivateRoute'
+import EditApplication from './pages/EditApplication'
 
 function App() {
   return (
@@ -15,8 +17,15 @@ function App() {
         <div className='container'>
           <Header />
           <Routes>
+            {/* <Route path='/' element={<PrivateRoute />}> */}
             <Route path='/' element={<Home />} />
-            <Route path='/form' element={<Form />} />
+            {/* </Route> */}
+            <Route path='/form' element={<PrivateRoute />}>
+              <Route path='/form' element={<Form />} />
+            </Route>
+            <Route path='/form/:ticketId' element={<PrivateRoute />}>
+              <Route path='/form/:ticketId' element={<EditApplication />} />
+            </Route>
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
           </Routes>

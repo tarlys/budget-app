@@ -40,26 +40,26 @@ function Form() {
     return now.getFullYear() + '-' + month + '-' + day
   }
 
-  const form = {
-    price,
-    count,
-    summary,
-    date,
-    applicationType,
-    company,
-    username,
-    unit,
-    place,
-    type,
-    applicationName,
-    spareParts,
-    month,
-    needless,
-    provider,
-    comment,
-    status,
-    time,
-  }
+  // const form = {
+  //   price,
+  //   count,
+  //   summary,
+  //   date,
+  //   applicationType,
+  //   company,
+  //   username,
+  //   unit,
+  //   place,
+  //   type,
+  //   applicationName,
+  //   spareParts,
+  //   month,
+  //   needless,
+  //   provider,
+  //   comment,
+  //   status,
+  //   time,
+  // }
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -107,34 +107,6 @@ function Form() {
       })
     )
 
-    navigate('/')
-  }
-
-  const onDraftButton = (event: any) => {
-    event.preventDefault()
-    setStatus(event.target.name)
-    dispatch(
-      createTicket({
-        price,
-        count,
-        summary,
-        date,
-        applicationType,
-        company,
-        unit,
-        username,
-        place,
-        type,
-        applicationName,
-        spareParts,
-        month,
-        needless,
-        provider,
-        comment,
-        status,
-        time,
-      })
-    )
     navigate('/')
   }
 

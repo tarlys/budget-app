@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { getUserTickets, getAllTickets, reset } from '../features/tickets/ticketSlice'
+import { Button, Table } from 'flowbite-react'
 import Spinner from '../components/Spinner'
 import ApplicationItem from '../components/ApplicationItem'
 import excelDownload from '../features/excel-download/excelDownload'
@@ -12,7 +13,7 @@ function Home() {
   const { tickets, isLoading, isSuccess } = useSelector((state: any) => state.ticket)
 
   const dispatch = useDispatch()
-  const tableRef = useRef(null)
+  // const tableRef = useRef(null)
 
   useEffect(() => {
     return () => {
@@ -39,6 +40,7 @@ function Home() {
     } else {
       setAllButtonEnabled(false)
     }
+    console.log(allButtonEnabled)
   }
 
   const onExcelDownload = (event: any) => {
@@ -90,53 +92,21 @@ function Home() {
         </>
       )}
 
-      <table ref={tableRef} className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-        <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
-          <tr>
-            <th scope='col' className='px-6 py-3'>
-              Найменування заявки
-            </th>
-            <th scope='col' className='px-6 py-3'>
-              <div className='flex items-center'>
-                id заявки
-                <a href='#'>
-                  <svg className='w-3 h-3 ml-1.5' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 24 24'>
-                    <path d='M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z' />
-                  </svg>
-                </a>
-              </div>
-            </th>
-            <th scope='col' className='px-6 py-3'>
-              <div className='flex items-center'>
-                Статус заявки
-                <a href='#'>
-                  <svg className='w-3 h-3 ml-1.5' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 24 24'>
-                    <path d='M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z' />
-                  </svg>
-                </a>
-              </div>
-            </th>
-            <th scope='col' className='px-6 py-3'>
-              <div className='flex items-center'>
-                Сумма
-                <a href='#'>
-                  <svg className='w-3 h-3 ml-1.5' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 24 24'>
-                    <path d='M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z' />
-                  </svg>
-                </a>
-              </div>
-            </th>
-            <th scope='col' className='px-6 py-3'>
-              <span className='sr-only'>Edit</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <Table.Head>
+          <Table.HeadCell>Найменування заявки</Table.HeadCell>
+          <Table.HeadCell>id заявки</Table.HeadCell>
+          <Table.HeadCell>Статус заявки</Table.HeadCell>
+          <Table.HeadCell>Сумма</Table.HeadCell>
+          <Table.HeadCell>Автор</Table.HeadCell>
+          <Table.HeadCell>Редагування</Table.HeadCell>
+        </Table.Head>
+        <Table.Body className='divide-y'>
           {tickets.map((ticket: any) => (
             <ApplicationItem key={ticket._id} ticket={ticket} />
           ))}
-        </tbody>
-      </table>
+        </Table.Body>
+      </Table>
     </div>
   )
 }

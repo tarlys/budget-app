@@ -340,10 +340,10 @@ function EditApplication() {
             {user.isAdmin && (
               <>
                 <option value='return'>На доопрацювання</option>
-                <option value='submitted'>Затверджено</option>
                 <option value='decline'>Заявка відхилена</option>
               </>
             )}
+            <option value='submitted'>Затверджено</option>
           </select>
         </div>
 
